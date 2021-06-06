@@ -123,29 +123,16 @@ def write_excel_():
     wb = openpyxl.load_workbook(file3)
     wb.create_sheet(index=0,title='ccc_sheet')
     sheet = wb['ccc_sheet']
-    # sheet['A1'] = 'test2'
-    # print(sheet['A1'].value)
 
-    #???
-    # for i in data:
-    #     print(i)
-    #取数据
-    abc = "0ABCDEFG"
+    abc = "0ABCDEFGHIJKL"
     j = 0
-    # for l in range(3):
-    #     print(abc[l+1])
-    # print(abc[1+1])
     for i in range(len(data)):
-        j = j+1
-        for data_re in data[i]:
-            # j=j+1
-            print(f'data_re: {data_re}')
+        for j in range(len(data[i])):
+            sheet[abc[j+1]+str(i+1)] = data[i][j]
+            # sheet.cell(row=i+1,column=j+1,value=data[i][j])
+            print(f'字母是{abc[j+1]} 数字是{i+1} 数据是{data[i][j]}')
 
-            sheet[abc[i+1]+str(i+1)] = data_re
-            print(f'字母是{abc[i+1]} 数字是{str(i+1)} 数据是{data_re}')
-            # print(sheet[abc[i+1]+str(i+1)].value)
-
-    # wb.save(file3)
+    wb.save(file3)
 
 data2 = [['John Brown', 18, 'New York No. 1 Lake Park'],['John Brown2', 11, 'New York No. 1 Lake Park2']]
 #另一种写入方式
@@ -160,4 +147,4 @@ def write_excel():
     wb.save(file3)
 
 # xlrd_read()
-write_excel()
+write_excel_()
