@@ -1,5 +1,6 @@
 import openpyxl
 import xlrd
+import win32com.client as win32
 
 file1 = ''
 file2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
@@ -124,8 +125,7 @@ def write_excel_():
     wb.create_sheet(index=0,title='ccc_sheet')
     sheet = wb['ccc_sheet']
 
-    abc = "0ABCDEFGHIJKL"
-    j = 0
+    abc = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for i in range(len(data)):
         for j in range(len(data[i])):
             sheet[abc[j+1]+str(i+1)] = data[i][j]
@@ -145,6 +145,15 @@ def write_excel():
         for col_index, col_item in enumerate(row_item):
             sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
     wb.save(file3)
+
+def change():
+    fname = "/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls"
+    excel = win32.gencache.EnsureDispatch('Excel.Application')
+    wb = excel.Workbooks.Open(fname)
+
+    wb.SaveAs(fname + "x", FileFormat=51)  # FileFormat = 51 is for .xlsx extension
+    wb.Close()  # FileFormat = 56 is for .xls extension
+    excel.Application.Quit()
 
 # xlrd_read()
 write_excel_()
