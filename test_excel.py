@@ -111,7 +111,7 @@ def xlrd_read():
 
 data = [['title1', 'title2', 'title_value3'], ['数据4', '数据5', '数据6_1'], ['数据10', '数据11', '数据12_1']]
 
-#逻辑有问题忽略
+#写法1
 def write_excel_():
     #内存中创建一个空表格
     # wb = openpyxl.Workbook()
@@ -135,7 +135,7 @@ def write_excel_():
     wb.save(file3)
 
 data2 = [['John Brown', 18, 'New York No. 1 Lake Park'],['John Brown2', 11, 'New York No. 1 Lake Park2']]
-#另一种写入方式
+#写法2
 def write_excel():
     wb = openpyxl.load_workbook(file3)
     wb.create_sheet(index=0,title='ccc_sheet_222')
