@@ -1,6 +1,6 @@
 import openpyxl
 import xlrd
-import win32com.client as win32
+# import win32com.client as win32
 
 file1 = ''
 file2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
@@ -81,22 +81,22 @@ def xlrd_read_():
                     #若包含_1获取行数，并取改行的所有数据
                     anadata1 = []
 
+#筛选数据并写到列表里,三重判断，分别判断列指标1："value"，行指标1："_1"，行指标2："_2"
 def xlrd_read():
     wb = xlrd.open_workbook(file2)
     table = wb.sheet_by_name('Sheet2')
+    #获取行数列数
     nrow = table.nrows
     ncol = table.ncols
-    # print(nrow-1)
-    # print(ncol-1)
-    # print(table.cell(nrow-1,ncol-1))
     need_data =[]
+    need_data2 = []
     #获取标题
     for row in range(nrow):
         for col in range(ncol):
             if "title" in table.cell(row, col).value:
-                need_data.append(table.row_values(row))
+                need_data2.append(table.row_values(row))
                 break
-    #获取需要的行
+    #获取需要的行，判断条件为包含'_1'
     for row in range(nrow):
         for col in range(ncol):
             #判断是否包含'value'，是的话选取整列
@@ -108,12 +108,19 @@ def xlrd_read():
                     if "_1" in table.cell(i,col).value:
                         # print("存在")
                         need_data.append(table.row_values(i))
-    print(need_data)
 
-data = [['title1', 'title2', 'title_value3'], ['数据4', '数据5', '数据6_1'], ['数据10', '数据11', '数据12_1']]
+    # 获取需要的行，判断条件为包含'_2'
+    for i in range(len(need_data)):
+        for j in range(len(need_data[0])):
+            if "_2" in need_data[i][j]:
+                need_data2.append(need_data[i])
+    print(need_data2)
+    return need_data2
+
+# data = [['title1', 'title2', 'title_value3'], ['数据4', '数据5', '数据6_1'], ['数据10', '数据11', '数据12_1']]
 
 #写法1
-def write_excel_():
+def write_excel_(data):
     #内存中创建一个空表格
     # wb = openpyxl.Workbook()
     # sheet = wb.active
@@ -124,14 +131,12 @@ def write_excel_():
     wb = openpyxl.load_workbook(file3)
     wb.create_sheet(index=0,title='ccc_sheet')
     sheet = wb['ccc_sheet']
-
     abc = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for i in range(len(data)):
         for j in range(len(data[i])):
             sheet[abc[j+1]+str(i+1)] = data[i][j]
             # sheet.cell(row=i+1,column=j+1,value=data[i][j])
             print(f'字母是{abc[j+1]} 数字是{i+1} 数据是{data[i][j]}')
-
     wb.save(file3)
 
 data2 = [['John Brown', 18, 'New York No. 1 Lake Park'],['John Brown2', 11, 'New York No. 1 Lake Park2']]
@@ -146,7 +151,7 @@ def write_excel():
             sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
     wb.save(file3)
 
-def change():
+def xls_to_xlsx():
     fname = "/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls"
     excel = win32.gencache.EnsureDispatch('Excel.Application')
     wb = excel.Workbooks.Open(fname)
@@ -156,4 +161,7 @@ def change():
     excel.Application.Quit()
 
 # xlrd_read()
-write_excel_()
+#将筛选的数据写入到excel中
+write_excel_(xlrd_read())
+# xls_to_xlsx()
+# exc_two()
