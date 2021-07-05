@@ -6,85 +6,13 @@ file1 = ''
 file2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
 file3 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
 
-def openpyxl_read():
-    # print(type(wb))
-    # print(wb.sheetnames)
-    # #获取excel中的活动表
-    # k_sheet = wb.active
-    # print(k_sheet)
-    wb = openpyxl.load_workbook(file1)
-    sheet = wb['sheet1']
-    # 获取指定位置的数据
-    # print(sheet['B4'].value)
-    # 获取指定行列的值
-    # print(sheet.cell(row=3,column=13).value)
-    # 获取excel中的行数，列数
-    # print(sheet.max_row)
-    # print(sheet.max_column)
-
-    # 遍历专业列的所有数据
-    # for row in range(2,sheet.max_row+1):
-    #     zhuanye = sheet['M'+str(row)].value
-    #     print(zhuanye)
-
-    # 不可用，需要自增的是字母不是数字
-    # for column in range(3,sheet.max_column+1):
-    #     col = sheet['A'+str(column)].value
-    #     print(col)
-
-    # 获取整个表格的最大行数及列数简单方法
-    ws = wb['sheet1']
-    # print(ws.dimensions)
-    # 按行遍历，但不显示value
-    # for row in ws.rows:
-    #     print(row)
-    # 遍历全部，好些的写法
-    for row_obj in sheet[ws.dimensions]:
-        for cell_obj in row_obj:
-            # cell_obj.coordinate获取当前的单元格属性
-            print(cell_obj.coordinate, cell_obj.value)
-        print('end of row')
-
-#逻辑有问题，先忽略
-def xlrd_read_():
+"""
+筛选数据并写到列表里,三重判断，分别判断列指标1："value"，行指标1："_1"，行指标2："_2"
+支持的excel格式为xls
+"""
+def xlrd_read_xls():
     wb = xlrd.open_workbook(file2)
-    #获取所有工作表的名称
-    # print(wb.sheet_names())
-    # 根据工作表的名称获取工作表的内容，常用在已知需要的sheet名称时
-    table = wb.sheet_by_name('Sheet2')
-    # 打印工作表的名称、行数和列数
-    # print(table.name, table.nrows, table.ncols)
-    #另一种方式获取表sheet，常用在不知道需要的sheet名称时，可以取第n个
-    # index = wb.sheet_names()[1]
-    # print(index)
-    #获取索引行的数据
-    # print(table.row_values(1))
-    #获取索引列的数据
-    # print(table.col_values(0))
-    # print(table.row(0))
-
-    #遍历所有的数据
-    #获取该sheet的行数i及列数l
-    nrow = table.nrows
-    ncol = table.ncols
-    for i in range(nrow):
-        # print(table.row_values(i))
-        #判断每个单元格的数据，是否包含value
-        for l in range(ncol):
-            if "value" in table.row_values(i)[l]:
-                # print(table.row_values(i))
-                #取该列的所有数据
-                print(table.col_values(l))
-                #判断该列的数据包含_1则取整行
-                # print(len(table.col_values(l))-1)
-                if "_1" in table.col_values(l)[nrow-1]:
-                    #若包含_1获取行数，并取改行的所有数据
-                    anadata1 = []
-
-#筛选数据并写到列表里,三重判断，分别判断列指标1："value"，行指标1："_1"，行指标2："_2"
-def xlrd_read():
-    wb = xlrd.open_workbook(file2)
-    table = wb.sheet_by_name('Sheet2')
+    table = wb.sheet_by_name('Sheet1')
     #获取行数列数
     nrow = table.nrows
     ncol = table.ncols
@@ -93,33 +21,80 @@ def xlrd_read():
     #获取标题
     for row in range(nrow):
         for col in range(ncol):
-            if "title" in table.cell(row, col).value:
-                need_data2.append(table.row_values(row))
+            if "title" in str(table.cell(row, col).value):
+                need_data.append(table.row_values(row))
                 break
     #获取需要的行，判断条件为包含'_1'
     for row in range(nrow):
         for col in range(ncol):
             #判断是否包含'value'，是的话选取整列
-            if "value" in table.cell(row,col).value:
+            if "value" in str(table.cell(row,col).value):
                 #判断这列是否包含'_1'，是的话取整行
                 # print(table.col_values(col))
                 #遍历这一列的所有数据，并标记存在'_1'的行
                 for i in range(len(table.col_values(col))):
-                    if "_1" in table.cell(i,col).value:
+                    if "_1" in str(table.cell(i,col).value):
                         # print("存在")
                         need_data.append(table.row_values(i))
 
     # 获取需要的行，判断条件为包含'_2'
-    for i in range(len(need_data)):
-        for j in range(len(need_data[0])):
-            if "_2" in need_data[i][j]:
-                need_data2.append(need_data[i])
-    print(need_data2)
-    return need_data2
+    # for i in range(len(need_data)):
+    #     for j in range(len(need_data[0])):
+    #         if "_2" in need_data[i][j]:
+    #             need_data2.append(need_data[i])
+    print(need_data)
+    return need_data
 
-# data = [['title1', 'title2', 'title_value3'], ['数据4', '数据5', '数据6_1'], ['数据10', '数据11', '数据12_1']]
+"""
+支持xlsx格式的读
+"""
+def openpy_read_xlsx():
+    wb = openpyxl.load_workbook(file3)
+    table = wb['Sheet2']
+    ws = wb.active
+    #获取行数列数
+    nrow = table.max_row
+    ncol = table.max_column
+    need_data2 = []
+
+    #获取标题
+    for row in range(1,nrow+1):
+        for col in range(1,ncol+1):
+            #如果这一行中存在title字样，遍历这一行的所有数据，添加到列表中
+            if "title" in str(table.cell(row, col).value):
+                for i in range(1,ncol+1):
+                    # print(table.cell(row, i).value)
+                    need_data2.append(table.cell(row, i).value)
+                # print(need_data2)
+                break
+
+    #获取需要的行，判断条件为包含'_1'
+    for row in range(1,nrow+1):
+        for col in range(1,ncol+1):
+            #判断是否包含'value'，是的话选取整列
+            if "value" in str(table.cell(row,col).value):
+                #判断这列是否包含'_1'，是的话取整行
+                # print(table.cell(row, col).value)
+                #遍历这一列的所有数据，并标记存在'_1'的行
+                for i in range(1,nrow+1):
+                    if "_1" in str(table.cell(i,col).value):
+                        # print(table.cell(i,col).value)
+                        #将找到的这一行所有数据写入列表
+                        for j in range(1,ncol+1):
+                            # print(table.cell(i,j).value)
+                            need_data2.append(table.cell(i,j).value)
+
+    #将改列表按照列数切成多个列表
+    per_list_len = 12
+    list_of_group = zip(*(iter(need_data2),) * per_list_len)
+    end_list = [list(i) for i in list_of_group]  # i is a tuple
+    count = len(need_data2) % per_list_len
+    end_list.append(need_data2[-count:]) if count != 0 else end_list
+    print(end_list)
+    return end_list
 
 #写法1
+# data = [['title1', 'title2', 'title_value3'], ['数据4', '数据5', '数据6_1'], ['数据10', '数据11', '数据12_1']]
 def write_excel_(data):
     #内存中创建一个空表格
     # wb = openpyxl.Workbook()
@@ -146,22 +121,24 @@ def write_excel():
     wb.create_sheet(index=0,title='ccc_sheet_222')
     sheet = wb['ccc_sheet_222']
     #好的写法写入excel
-    for row_index, row_item in enumerate(data):
+    for row_index, row_item in enumerate(data2):
         for col_index, col_item in enumerate(row_item):
             sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
     wb.save(file3)
 
-def xls_to_xlsx():
-    fname = "/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls"
-    excel = win32.gencache.EnsureDispatch('Excel.Application')
-    wb = excel.Workbooks.Open(fname)
+#转换功能先忽略
+# def xls_to_xlsx():
+#     fname = "/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls"
+#     excel = win32.gencache.EnsureDispatch('Excel.Application')
+#     wb = excel.Workbooks.Open(fname)
+#
+#     wb.SaveAs(fname + "x", FileFormat=51)  # FileFormat = 51 is for .xlsx extension
+#     wb.Close()  # FileFormat = 56 is for .xls extension
+#     excel.Application.Quit()
 
-    wb.SaveAs(fname + "x", FileFormat=51)  # FileFormat = 51 is for .xlsx extension
-    wb.Close()  # FileFormat = 56 is for .xls extension
-    excel.Application.Quit()
-
-# xlrd_read()
+# xlrd_read_xls()
 #将筛选的数据写入到excel中
-write_excel_(xlrd_read())
+# write_excel_(xlrd_read())
 # xls_to_xlsx()
 # exc_two()
+openpy_read_xlsx()
