@@ -2,11 +2,9 @@ import openpyxl
 import xlrd
 import time
 from openpyxl.cell import MergedCell
-import os
-from openpyxl.workbook import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 file1 = ''
-file_xxx = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
 file_xxx2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
 
 """
@@ -82,40 +80,17 @@ def write_excel_(file,data):
 
 data2 = [['John Brown', 18, 'New York No. 1 Lake Park'],['John Brown2', 11, 'New York No. 1 Lake Park2']]
 #写法2，较好的写法
-"""
-输入的是一个以行为分隔的列表，若输入文件存在，则在该文件新建一个sheet存储数据，若不存在，则创建一个时间戳命名的xlsx文件
-"""
-def write_excel(file = '默认.xlsx',data = [['默认数据1'],['默认数据2']],sheetname = 'ces'):
-    if os.path.exists(file) == True:
-        wb = openpyxl.load_workbook(file)
-        # 默认写到第一个sheet中，index为0
-        wb.create_sheet(index=0, title=f'ccc_sheet_{sheetname}')
-        sheet = wb[f'ccc_sheet_{sheetname}']
-        # 好的写法写入excel
-        for row_index, row_item in enumerate(data):
-            for col_index, col_item in enumerate(row_item):
-                sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
-        wb.save(file)
-        print('---写入完成---')
-    else:
-        wbc = Workbook()
-        log_path = os.path.dirname(os.path.abspath('.')) + '/testexcel/file/'
-        t = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-        suffix = '.xlsx'  # 文件类型
-        newfile = t + suffix
-        path = log_path + t + suffix
-        wbc.save(path)
-        print(f"输入路径不存在xlsx文件,创建文件 {log_path+newfile} ")
-        wb = openpyxl.load_workbook(log_path+newfile)
-        # 默认写到第一个sheet中，index为0
-        wb.create_sheet(index=0, title=f'ccc_sheet_{sheetname}')
-        sheet = wb[f'ccc_sheet_{sheetname}']
-        # 好的写法写入excel
-        for row_index, row_item in enumerate(data):
-            for col_index, col_item in enumerate(row_item):
-                sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
-        wb.save(log_path+newfile)
-        print('---写入完成---')
+def write_excel(file,data,sheetname = 'ces'):
+    wb = openpyxl.load_workbook(file)
+    #默认写到第一个sheet中，index为0
+    wb.create_sheet(index=0,title=f'ccc_sheet_{sheetname}')
+    sheet = wb[f'ccc_sheet_{sheetname}']
+    #好的写法写入excel
+    for row_index, row_item in enumerate(data):
+        for col_index, col_item in enumerate(row_item):
+            sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
+    wb.save(file)
+    print('---写入完成---')
 
 def merged_deal_xlsx(file):
     """
@@ -166,10 +141,8 @@ def merged_deal_xlsx(file):
 #将xlsx取出的数据写入excel
 # write_excel(file_xxx2,openpy_read_xlsx(file_xxx2))
 
-write_excel()
-
 #读合并单元格
 # merged_deal_xlsx(file_xxx2)
 
-#     write_excel(file= file_xxx2,data= merged_deal_xlsx(file_xxx2))
+# write_excel(file= file_xxx2,data= merged_deal_xlsx(file_xxx2))
 
