@@ -156,6 +156,7 @@ def merged_deal_xlsx(file):
     print(end_list2)
     return end_list2
 
+
 #读xls的excel
 # xlrd_read_xls(file_xxx)
 
@@ -166,7 +167,7 @@ def merged_deal_xlsx(file):
 #将xlsx取出的数据写入excel
 # write_excel(file_xxx2,openpy_read_xlsx(file_xxx2))
 
-write_excel()
+write_excel(data=[['A1324'], ['A1303'], ['A1325'], ['A1332'], ['A1332']])
 
 #读合并单元格
 # merged_deal_xlsx(file_xxx2)

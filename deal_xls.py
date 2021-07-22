@@ -45,6 +45,9 @@ def xlrd_read_xls(file,sheetname = 'Sheet1'):
     print(need_data)
     return need_data
 
+"""
+合并单元格的处理，传入行列坐标输出值，需要重写
+"""
 def merged_deal_xls(row,col):
     cell_value = None
     # print(table.merged_cells)
@@ -62,7 +65,7 @@ def merged_deal_xls(row,col):
     return cell_value
 
 """
-从xls文件中读取指定sheet数据，并将合并单元格补全，然后通过指定列信息及行信息筛选需要的数据，写入到xlsx文件中
+从xls文件中读取指定sheet数据，并将合并单元格补全,返回一个list
 """
 if __name__ == "__main__":
     newdata = []
@@ -88,6 +91,10 @@ if __name__ == "__main__":
         if element not in end_list2:
             end_list2.append(element)
     print(end_list2)
-    write_excel(file=file_xxx2,data=end_list2,sheetname='ccc')
-    data = openpy_read_xlsx(file=file_xxx2,sheetname='ccc_sheet_ccc')
-    write_excel(file=file_xxx2,data=data,sheetname='ccc2')
+
+    #第一步，读取xls的file文件，并将其合并补全每一个合并单元格的数据，返回list，并写入到xlsx文件；
+    #第二步，读取第一步保存的文件并筛选指定的数据返回一个list
+    #第三步，将这个list数据写入到文件中，命名一个sheetname
+    # write_excel(file=file_xxx2,data=end_list2,sheetname='ccc')
+    # data = openpy_read_xlsx(file=file_xxx2,sheetname='ccc_sheet_ccc')
+    # write_excel(file=file_xxx2,data=data,sheetname='ccc2')

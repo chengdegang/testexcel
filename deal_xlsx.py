@@ -3,12 +3,13 @@ import xlrd
 import time
 from openpyxl.cell import MergedCell
 from openpyxl.worksheet.worksheet import Worksheet
+from test_excel import write_excel
 
 file1 = ''
 file_xxx2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
 
 """
-支持xlsx格式的读,输入要读的文件路径
+支持xlsx格式的读,输入要读的文件路径,
 """
 def openpy_read_xlsx(file,sheetname):
     wb = openpyxl.load_workbook(file)
@@ -53,44 +54,6 @@ def openpy_read_xlsx(file,sheetname):
     end_list.append(need_data2[-count:]) if count != 0 else end_list
     print(end_list)
     return end_list
-
-"""
-写入均只支持xlsx，两种写法，用第二种即可
-"""
-#写法1，列为手动写的，有长度限制
-# data = [['title1', 'title2', 'title_value3'], ['数据4', '数据5', '数据6_1'], ['数据10', '数据11', '数据12_1']]
-def write_excel_(file,data):
-    #内存中创建一个空表格
-    # wb = openpyxl.Workbook()
-    # sheet = wb.active
-    # sheet.title = 'ccc_sheet'
-    # print(wb.sheetnames)
-
-    #写到原来的表格中，新建一个sheet,只支持xlsx文件
-    wb = openpyxl.load_workbook(file)
-    wb.create_sheet(index=0,title='ccc_sheet')
-    sheet = wb['ccc_sheet']
-    abc = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    for i in range(len(data)):
-        for j in range(len(data[i])):
-            sheet[abc[j+1]+str(i+1)] = data[i][j]
-            # sheet.cell(row=i+1,column=j+1,value=data[i][j])
-            print(f'字母是{abc[j+1]} 数字是{i+1} 数据是{data[i][j]}')
-    wb.save(file)
-
-data2 = [['John Brown', 18, 'New York No. 1 Lake Park'],['John Brown2', 11, 'New York No. 1 Lake Park2']]
-#写法2，较好的写法
-def write_excel(file,data,sheetname = 'ces'):
-    wb = openpyxl.load_workbook(file)
-    #默认写到第一个sheet中，index为0
-    wb.create_sheet(index=0,title=f'ccc_sheet_{sheetname}')
-    sheet = wb[f'ccc_sheet_{sheetname}']
-    #好的写法写入excel
-    for row_index, row_item in enumerate(data):
-        for col_index, col_item in enumerate(row_item):
-            sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
-    wb.save(file)
-    print('---写入完成---')
 
 def merged_deal_xlsx(file):
     """
@@ -143,6 +106,13 @@ def merged_deal_xlsx(file):
 
 #读合并单元格
 # merged_deal_xlsx(file_xxx2)
-
 # write_excel(file= file_xxx2,data= merged_deal_xlsx(file_xxx2))
+
+
+#第一步，读取xlsx的file文件，并将其合并补全每一个合并单元格的数据，返回list，并写入到xlsx文件
+#第二步，读取第一步保存的文件并筛选指定的数据返回一个list
+#第三步，将这个list数据写入到文件中，命名一个sheetname
+write_excel(file=file_xxx2,data=merged_deal_xlsx(file_xxx2),sheetname='cccxlsx')
+data = openpy_read_xlsx(file=file_xxx2,sheetname='ccc_sheet_cccxlsx')
+write_excel(file=file_xxx2,data=data,sheetname='ccc2xlsx')
 
