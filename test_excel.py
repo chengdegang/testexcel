@@ -1,3 +1,5 @@
+import shutil
+from pathlib import Path
 import openpyxl
 import xlrd
 import time
@@ -83,14 +85,14 @@ def write_excel_(file,data):
 data2 = [['John Brown', 18, 'New York No. 1 Lake Park'],['John Brown2', 11, 'New York No. 1 Lake Park2']]
 #写法2，较好的写法
 """
-输入的是一个以行为分隔的列表，若输入文件存在，则在该文件新建一个sheet存储数据，若不存在，则创建一个时间戳命名的xlsx文件
+在当前路径创建xlsx文件,若已存在会直接覆盖写入数据
 """
-def write_excel(file = '默认.xlsx',data = [['默认数据1'],['默认数据2']],sheetname = 'ces'):
+def write_excel(file = '默认.xlsx',data = [['默认数据3'],['默认数据5']],sheetname = 'ces'):
     if os.path.exists(file) == True:
         wb = openpyxl.load_workbook(file)
         # 默认写到第一个sheet中，index为0
-        wb.create_sheet(index=0, title=f'ccc_sheet_{sheetname}')
-        sheet = wb[f'ccc_sheet_{sheetname}']
+        wb.create_sheet(index=0, title=f'{sheetname}')
+        sheet = wb[f'{sheetname}']
         # 好的写法写入excel
         for row_index, row_item in enumerate(data):
             for col_index, col_item in enumerate(row_item):
@@ -99,23 +101,24 @@ def write_excel(file = '默认.xlsx',data = [['默认数据1'],['默认数据2']
         print('---写入完成---')
     else:
         wbc = Workbook()
-        log_path = os.path.dirname(os.path.abspath('.')) + '/testexcel/file/'
-        t = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-        suffix = '.xlsx'  # 文件类型
-        newfile = t + suffix
-        path = log_path + t + suffix
+        log_path = os.getcwd() + '/'
+        # t = time.strftime('%Y%m%d_%H%M', time.localtime(time.time()))
+        # suffix = '.xlsx'  # 文件类型
+        # newfile = file + suffix
+        path = log_path + file
         wbc.save(path)
-        print(f"输入路径不存在xlsx文件,创建文件 {log_path+newfile} ")
-        wb = openpyxl.load_workbook(log_path+newfile)
+        print(f"创建文件 {log_path + file} ")
+        wb = openpyxl.load_workbook(log_path + file)
         # 默认写到第一个sheet中，index为0
-        wb.create_sheet(index=0, title=f'ccc_sheet_{sheetname}')
-        sheet = wb[f'ccc_sheet_{sheetname}']
+        wb.create_sheet(index=0, title=f'{sheetname}')
+        sheet = wb[f'{sheetname}']
         # 好的写法写入excel
         for row_index, row_item in enumerate(data):
             for col_index, col_item in enumerate(row_item):
                 sheet.cell(row=row_index + 1, column=col_index + 1, value=col_item)
-        wb.save(log_path+newfile)
+        wb.save(log_path + file)
         print('---写入完成---')
+        return log_path + file
 
 def merged_deal_xlsx(file):
     """
@@ -156,6 +159,30 @@ def merged_deal_xlsx(file):
     print(end_list2)
     return end_list2
 
+"""
+查找指定文件夹下的指定文件，移动到指定路径并重命名
+"""
+def osmake():
+    t = time.strftime("%Y_%m_%d_%H_%M", time.localtime())
+    for f_name in os.listdir('file'):
+        # print(f_name)
+        # if f_name.endswith('.txt'):
+        #     print(f_name)
+        if '123' in f_name:
+            newdir = Path(f'{os.getcwd()}/file/backups/')
+            if newdir.exists():
+                print('cunz')
+            else:
+                newdir = os.mkdir(f'{os.getcwd()}/file/backups/')
+
+            print(f'find path: {os.getcwd()}/file/{f_name}')
+            print(f'goal path: {newdir}/')
+            #move
+            shutil.move(str(f'{os.getcwd()}/file/{f_name}'),f'{newdir}/')
+            #rename
+            shutil.move(f'{newdir}/{f_name}',f"{newdir}/{f_name.split('.')[0]}_{t}.{f_name.split('.')[1]}")
+
+osmake()
 
 #读xls的excel
 # xlrd_read_xls(file_xxx)
@@ -167,7 +194,12 @@ def merged_deal_xlsx(file):
 #将xlsx取出的数据写入excel
 # write_excel(file_xxx2,openpy_read_xlsx(file_xxx2))
 
-write_excel(data=[['A1324'], ['A1303'], ['A1325'], ['A1332'], ['A1332']])
+# datac = [['A1324','iPhone 3G (国行)'], ['A1303','iPhone 3GS'], ['A1325','iPhone 3GS (国行, 无 WLAN 功能)']]
+# data=['A1324,iPhone 3G (国行)', 'A1303,iPhone 3GS']
+# datat = [['A1324', 'iPhone 3G (国行)'], ['A1303', 'iPhone 3GS']]
+# write_excel(data=datat)
+
+# write_excel(file='file/20210722193722.xlsx',data = [['默认数据1'],['默认数据2']],sheetname = 'ces2')
 
 #读合并单元格
 # merged_deal_xlsx(file_xxx2)

@@ -9,7 +9,7 @@ file1 = ''
 file_xxx2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
 
 """
-支持xlsx格式的读,输入要读的文件路径,
+支持xlsx格式的读,输入要读的文件路径,筛选需要的数据
 """
 def openpy_read_xlsx(file,sheetname):
     wb = openpyxl.load_workbook(file)
