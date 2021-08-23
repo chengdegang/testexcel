@@ -6,10 +6,11 @@ import time
 from openpyxl.cell import MergedCell
 import os
 from openpyxl.workbook import Workbook
+import pandas as pd
 
 file1 = ''
-file_xxx = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
-file_xxx2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
+file_xls = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
+file_xlsx = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
 
 """
 支持xlsx格式的读,输入要读的文件路径
@@ -182,7 +183,56 @@ def osmake():
             #rename
             shutil.move(f'{newdir}/{f_name}',f"{newdir}/{f_name.split('.')[0]}_{t}.{f_name.split('.')[1]}")
 
-osmake()
+"""
+读文件并统计sheet及sheet中的数据量（行）
+"""
+def read_xlsx_1(file):
+    wb = openpyxl.load_workbook(file)
+    #获取所有sheet
+    sheets = wb.sheetnames
+    print(sheets)
+    for i in range(len(sheets)):
+        table = wb[sheets[i]]
+        nrow = table.max_row
+        print(f'{sheets[i]}行数为 : {nrow}')
+
+def panda():
+    f = pd.read_excel(file_xlsx,sheet_name='Sheet3')
+    #行数
+    # print(len(f.index.values))
+    # print(f.index.values)
+    #列数
+    # print(len(f.columns.values))
+    # print(f.columns.values)
+    #读取整个sheet的数据为一个矩阵
+    print(f.head())
+    #读取第一行数据
+    # data = f.ix[0].values
+    # print(data)
+
+def xls_to_xlsx(fdir):
+    for root,dirs,files in os.walk(fdir):
+        for name in files:#遍历文件夹下的文件名
+            if 'xls' in name:
+                # print(os.path.join(root, name))
+                fname = name.split('.')
+                # print(fname[0])
+                data = pd.DataFrame(pd.read_excel(os.path.join(root, name)))
+                # print(os.path.join(root,f'{fname[0]}cg'))
+                data.to_excel(os.path.join(root,fname[0])+'.xlsx', index=False)
+    print('转换完成')
+
+        # for name in dirs:#遍历文件夹下的路径
+        #     print(os.path.join(root,name))
+    # for i in os.listdir(fdir):
+    #     print(i)
+
+xls_to_xlsx('/Users/jackrechard/PycharmProjects/testexcel/file/change/')
+
+# panda()
+
+# read_xlsx_1(file_xlsx)
+# osmake()
 
 #读xls的excel
 # xlrd_read_xls(file_xxx)

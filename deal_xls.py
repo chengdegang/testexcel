@@ -1,8 +1,5 @@
 import xlrd
 
-from deal_xlsx import openpy_read_xlsx
-from test_excel import write_excel
-
 file_xxx = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx.xls'
 file_xxx2 = '/Users/jackrechard/PycharmProjects/testexcel/file/xxx2.xlsx'
 
