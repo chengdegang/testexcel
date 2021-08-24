@@ -42,11 +42,14 @@ def xlrd_read_xls(file,sheetname = 'Sheet1'):
     print(need_data)
     return need_data
 
+
 """
 合并单元格的处理，传入行列坐标输出值，需要重写
 """
-def merged_deal_xls(row,col):
+def merged_unit(row,col,file,sheetname):
     cell_value = None
+    wb = xlrd.open_workbook(file, formatting_info=True)
+    table = wb.sheet_by_name(sheetname)
     # print(table.merged_cells)
     for (rlow, rhigh, clow, chigh) in table.merged_cells:  # 遍历表格中所有合并单元格位置信息
         # print(rlow,rhigh,clow,chigh)
@@ -62,22 +65,19 @@ def merged_deal_xls(row,col):
     return cell_value
 
 """
-从xls文件中读取指定sheet数据，并将合并单元格补全,返回一个list
+传入xls文件路径及sheet名，输出处理过合并单元格的嵌套列表，可直接
 """
-if __name__ == "__main__":
+def merged_deal_xls(file,sheetname):
     newdata = []
-    file = file_xxx
     wb = xlrd.open_workbook(file, formatting_info=True)
-    table = wb.sheet_by_name('Sheet1')
+    table = wb.sheet_by_name(sheetname)
     # 获取行数列数
     nrow = table.nrows
     ncol = table.ncols
-    #(1,3)代表第二行第四列
-    # print(merged_deal_xls(3,2))
     for row_index in range(nrow):
         for col_index in range(ncol):
             # print(merged_deal_xls(row_index,col_index))
-            newdata.append(merged_deal_xls(row_index,col_index))
+            newdata.append(merged_unit(row_index,col_index,file,sheetname))
     per_list_len = ncol
     list_of_group = zip(*(iter(newdata),) * per_list_len)
     end_list = [list(i) for i in list_of_group]  # i is a tuple
@@ -88,6 +88,14 @@ if __name__ == "__main__":
         if element not in end_list2:
             end_list2.append(element)
     print(end_list2)
+    return end_list2
+
+"""
+从xls文件中读取指定sheet数据，并将合并单元格补全,返回一个list
+"""
+if __name__ == "__main__":
+
+    merged_deal_xls(file=file_xxx,sheetname='Sheet1')
 
     #第一步，读取xls的file文件，并将其合并补全每一个合并单元格的数据，返回list，并写入到xlsx文件；
     #第二步，读取第一步保存的文件并筛选指定的数据返回一个list

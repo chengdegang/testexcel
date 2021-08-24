@@ -112,7 +112,8 @@ def merged_deal_xlsx(file):
 #第一步，读取xlsx的file文件，并将其合并补全每一个合并单元格的数据，返回list，并写入到xlsx文件
 #第二步，读取第一步保存的文件并筛选指定的数据返回一个list
 #第三步，将这个list数据写入到文件中，命名一个sheetname
-write_excel(file=file_xxx2,data=merged_deal_xlsx(file_xxx2),sheetname='cccxlsx')
-data = openpy_read_xlsx(file=file_xxx2,sheetname='ccc_sheet_cccxlsx')
-write_excel(file=file_xxx2,data=data,sheetname='ccc2xlsx')
+temp_sheet = 'cccxlsx'
+write_excel(file=file_xxx2,data=merged_deal_xlsx(file_xxx2),sheetname=temp_sheet)
+data = openpy_read_xlsx(file=file_xxx2,sheetname=temp_sheet)
+write_excel(file=file_xxx2,data=data,sheetname='finalresult')
 

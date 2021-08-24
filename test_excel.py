@@ -1,8 +1,10 @@
 import shutil
+from _csv import writer
 from pathlib import Path
 import openpyxl
 import xlrd
 import time
+from datetime import datetime
 from openpyxl.cell import MergedCell
 import os
 from openpyxl.workbook import Workbook
@@ -196,30 +198,56 @@ def read_xlsx_1(file):
         nrow = table.max_row
         print(f'{sheets[i]}行数为 : {nrow}')
 
-def panda():
-    f = pd.read_excel(file_xlsx,sheet_name='Sheet3')
+def panda(file):
+    f = pd.read_excel(file,sheet_name=None)
+    for sheet in list(f):
+        print(sheet)
+        # 读取整个sheet的数据为一个矩阵
+        # print(f.head())
+        excel = pd.read_excel(file, sheet_name=sheet)
+        print(excel.head())
     #行数
     # print(len(f.index.values))
     # print(f.index.values)
     #列数
     # print(len(f.columns.values))
     # print(f.columns.values)
-    #读取整个sheet的数据为一个矩阵
-    print(f.head())
+
     #读取第一行数据
     # data = f.ix[0].values
     # print(data)
 
+def panda_write(file):
+    df1 = pd.DataFrame(
+        {'日期': [datetime(2020, 1, 1), datetime(2020, 1, 2)],
+         '销量': [10, 20]}
+    )
+    df2 = pd.DataFrame(
+        {'日期': [datetime(2020, 2, 1), datetime(2020, 2, 2)],
+         '销量': [15, 25]}
+    )
+    with pd.ExcelWriter(
+            file,
+            datetime_format='YYYY-MM-DD'  # 只显示年月日, 不显示时分秒
+    ) as writer:
+        df1.to_excel(writer, sheet_name='1月')  # Sheet1
+        df2.to_excel(writer, sheet_name='2月')  # Sheet2
+
+"""
+传入路径，遍历路径下所有xls并将其转换为xlsx
+"""
 def xls_to_xlsx(fdir):
+
     for root,dirs,files in os.walk(fdir):
         for name in files:#遍历文件夹下的文件名
             if 'xls' in name:
                 # print(os.path.join(root, name))
                 fname = name.split('.')
                 # print(fname[0])
-                data = pd.DataFrame(pd.read_excel(os.path.join(root, name)))
-                # print(os.path.join(root,f'{fname[0]}cg'))
-                data.to_excel(os.path.join(root,fname[0])+'.xlsx', index=False)
+                excel = pd.read_excel(os.path.join(root, name))
+                data = pd.DataFrame(excel)
+                data.to_excel(os.path.join(root, fname[0]) + '.xlsx',index=False)
+
     print('转换完成')
 
         # for name in dirs:#遍历文件夹下的路径
@@ -227,10 +255,10 @@ def xls_to_xlsx(fdir):
     # for i in os.listdir(fdir):
     #     print(i)
 
-xls_to_xlsx('/Users/jackrechard/PycharmProjects/testexcel/file/change/')
+# xls_to_xlsx('/Users/jackrechard/PycharmProjects/crawl_syb/data/')
 
-# panda()
-
+# panda('/Users/jackrechard/PycharmProjects/testexcel/file/change/ces.xls')
+# panda_write('/Users/jackrechard/PycharmProjects/testexcel/file/change/ces.xls')
 # read_xlsx_1(file_xlsx)
 # osmake()
 
